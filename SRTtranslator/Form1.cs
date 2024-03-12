@@ -89,18 +89,6 @@ namespace SRTtranslator
                 labDir.Text = folderBrowser.SelectedPath;
 
                 DirRefresh(folderBrowser.SelectedPath, toolStripTextBox1.Text);
-
-                /*string[] files = Directory.GetFiles(folderBrowser.SelectedPath, toolStripTextBox1.Text, SearchOption.AllDirectories);
-                foreach (string file in files)
-                {
-                    ListViewItem lvi = new ListViewItem();
-                    // установка названия файла
-                    lvi.Text = file.Remove(0, file.LastIndexOf('\\') + 1);
-                    lvi.ImageIndex = 1; // установка картинки для файла
-                                        // добавляем элемент в ListView
-                    listView1.Items.Add(lvi);
-
-                }*/
             
             }
 

@@ -13,8 +13,6 @@ namespace SRTtranslator
     public partial class Form1
     {
         static readonly string srtWord = @"^[^\d{1,}]\w.*$";
-        List<string> listSTR = new List<string>();
-        //Dictionary<string, string> dictOut = new Dictionary<string, string>();
 
         private static HttpClient Client = new HttpClient()
         {
@@ -67,25 +65,8 @@ namespace SRTtranslator
             return dict2;
         }
 
-
-        internal async Task<string> TaskTanslateString(string InputString)
-        //internal List<string> TaskTanslateString(string InputString) 
-        {
-            //List<string> listSTR = new List<string>();
-            Dictionary<string, string> dict = new Dictionary<string, string>();
-
-            //var result = await Client.GetAsync(uriName);
-            var result = await GetAsync(Client, InputString, "ru");
-            //var result = GetAsync(Client, InputString, "ru");
-
-            listSTR.Add(result.ToString());
-            return result;
-        }
-
-
         internal Dictionary<string, string> DictSringFromFile(string fileName)
         {
-            List<string> list = new List<string>();
             Dictionary<string, string> dict = new Dictionary<string, string>();
 
             using (StreamReader reader = new StreamReader(fileName, Encoding.UTF8))
@@ -95,16 +76,10 @@ namespace SRTtranslator
                 {
                     if (Regex.IsMatch(line, srtWord, RegexOptions.IgnoreCase))
                     {
-                        //list.Add(line);
                         dict.Add(line, null);
-                        //ConsoleTB.AppendText(line + Environment.NewLine);
-                        //var test = await TaskTanslateString(line);
-                        //ConsoleTB.AppendText(test + Environment.NewLine);
-                        //Console.WriteLine(line);
-
-
                     }
                 }
+
                 if (ConsoleTB.TextLength > 500)
                 {
                     ConsoleTB.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
