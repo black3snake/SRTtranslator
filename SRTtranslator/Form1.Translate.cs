@@ -14,7 +14,7 @@ namespace SRTtranslator
     {
         static readonly string srtWord = @"^[^\d{1,}]\w.*$";
         List<string> listSTR = new List<string>();
-        Dictionary<string, string> dictOut = new Dictionary<string, string>();
+        //Dictionary<string, string> dictOut = new Dictionary<string, string>();
 
         private static HttpClient Client = new HttpClient()
         {
