@@ -21,7 +21,7 @@ namespace SRTtranslator
             BaseAddress = new Uri("https://translate.googleapis.com")
         };
 
-        internal async void TranslatorHub(List<string> listSelectedFiles)
+        internal void TranslatorHub(List<string> listSelectedFiles)
         {
             Dictionary<string, string> dict = new Dictionary<string, string>();
             Dictionary<string, string> dictO2 = new Dictionary<string, string>();
@@ -30,42 +30,44 @@ namespace SRTtranslator
             {
                 dict = DictSringFromFile(fileName);
 
-                dictO2 =  await TaskTanslateString2(dict);
+                Task<Dictionary<string, string>> taskDic = Task.Run<Dictionary<string, string>>(() => TaskTanslateString3(dict));
 
-                foreach (var te in dictO2)
+                taskDic.ContinueWith((t) =>
                 {
-                    ConsoleTB.AppendText(te.Key + Environment.NewLine);
-                    ConsoleTB.AppendText(te.Value + Environment.NewLine);
-                    ConsoleTB.AppendText(Environment.NewLine);
-                }
+                    foreach (var te in t.Result)
+                    {
+                        Invoke(new Action(() =>
+                        {
+                            ConsoleTB.AppendText(te.Key + Environment.NewLine);
+                            ConsoleTB.AppendText(te.Value + Environment.NewLine);
+                            ConsoleTB.AppendText(Environment.NewLine);
+                        }));
+                    }
 
-                if (ConsoleTB.TextLength > 500)
-                {
-                    ConsoleTB.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-                    ConsoleTB.AppendText(ConsoleTB.TextLength + Environment.NewLine);
-                }
+                    Invoke(new Action(() =>
+                    {
+                        if (ConsoleTB.TextLength > 500 && ConsoleTB.ScrollBars != System.Windows.Forms.ScrollBars.Vertical)
+                        {
+                            ConsoleTB.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+                            ConsoleTB.AppendText(ConsoleTB.TextLength + Environment.NewLine);
+                        }
+                    }));
+                });
             }
-
-
-
         }
 
-        internal async Task<Dictionary<string, string>> TaskTanslateString2(Dictionary<string, string> dict)
+        internal async Task<Dictionary<string, string>> TaskTanslateString3(Dictionary<string, string> dict)
         {
             Dictionary<string, string> dict2 = new Dictionary<string, string>();
 
-            //var result = await Client.GetAsync(uriName);
-            foreach(var d in dict.Keys)
+            foreach (var d in dict.Keys)
             {
                 dict2.Add(d, await GetAsync(Client, d, "ru"));
-
             }
-            //var result = GetAsync(Client, InputString, "ru");
-
-            //listSTR.Add(result.ToString());
             return dict2;
         }
-        
+
+
         internal async Task<string> TaskTanslateString(string InputString)
         //internal List<string> TaskTanslateString(string InputString) 
         {
@@ -83,8 +85,6 @@ namespace SRTtranslator
 
         internal Dictionary<string, string> DictSringFromFile(string fileName)
         {
-            /*if (ConsoleTB.TextLength > 0)
-                ConsoleTB.Clear();*/
             List<string> list = new List<string>();
             Dictionary<string, string> dict = new Dictionary<string, string>();
 
