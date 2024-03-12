@@ -21,8 +21,6 @@ namespace SRTtranslator
             BaseAddress = new Uri("https://translate.googleapis.com")
         };
 
-        //Uri uriName = new Uri("https://translate.googleapis.com");
-
         internal async void TranslatorHub(List<string> listSelectedFiles)
         {
             Dictionary<string, string> dict = new Dictionary<string, string>();
