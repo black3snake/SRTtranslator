@@ -46,10 +46,7 @@ namespace SRTtranslator
                         ConsoleTB.Clear();
 
                     if (bc.Count > 0)
-                    {
-                        //MyClass localItem;
                         while (bc.TryTake(out MyClass localItem)) {}
-                    }
                         
                     foreach (ListViewItem lVitem in listView1.SelectedItems)
                     {
@@ -67,6 +64,9 @@ namespace SRTtranslator
                 {
                     if (ConsoleTB.TextLength > 0)
                         ConsoleTB.Clear();
+                    
+                    if (bc.Count > 0)
+                        while (bc.TryTake(out MyClass localItem)) { }
 
                     listSelectFiles.Add(labDir.Text + "\\"+ listView1.SelectedItems[0].Text);
                     TranslatorHub(listSelectFiles);
