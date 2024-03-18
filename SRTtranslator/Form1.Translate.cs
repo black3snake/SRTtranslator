@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+//using System.Windows.Threading;
 
 namespace SRTtranslator
 {
@@ -26,19 +30,41 @@ namespace SRTtranslator
             BaseAddress = new Uri("https://translate.googleapis.com")
         };
 
-        internal async void TranslatorHub(List<string> listSelectedFiles)
+        internal void TranslatorHub(List<string> listSelectedFiles)
         {
-            Dictionary<string, string> dict = new Dictionary<string, string>();
-            Dictionary<string, string> dictO2 = new Dictionary<string, string>();
+            //Dictionary<string, string> dict = new Dictionary<string, string>();
+            //Dictionary<string, string> dictO2 = new Dictionary<string, string>();
 
             //options.MaxDegreeOfParallelism = Environment.ProcessorCount > 2 ? Environment.ProcessorCount - 1 : 1;
-            ConsoleTB.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
 
-            await Zapusk(listSelectedFiles);
 
-            OutputC(bc);
+            /*Task.Run(() =>
+            {
+                listSelectedFiles.AsParallel().WithDegreeOfParallelism(options.MaxDegreeOfParallelism).ForAll(ls => { MyTask(ls); });
+                *//*Invoke(new Action(() =>
+                {
+                    OutputC(bc);
+                }));*//*
 
-            //listSelectedFiles.AsParallel().WithDegreeOfParallelism(options.MaxDegreeOfParallelism).ForAll(ls => { MyTask(ls); });
+                //Zapusk(listSelectedFiles);
+
+            });*/
+
+            //Task task = Task.Run(() => Zapusk(listSelectedFiles));
+
+            /*while (!task.IsCompleted)
+            {
+                Thread.Sleep(2000);
+                ConsoleTB.AppendText("Ожидание.." + Environment.NewLine);
+            }*/
+
+
+            //ConsoleTB.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+
+            //Zapusk(listSelectedFiles);
+
+            //OutputC(bc);
+
 
 
             /*foreach (string fileName in listSelectedFiles)
@@ -85,13 +111,28 @@ namespace SRTtranslator
             }*/
         }
 
-        internal Task Zapusk(List<string> listSelectedFiles)
+        internal async Task Zapusk(List<string> listSelectedFiles)
         {
             options.MaxDegreeOfParallelism = Environment.ProcessorCount > 2 ? Environment.ProcessorCount - 1 : 1;
 
-            listSelectedFiles.AsParallel().WithDegreeOfParallelism(options.MaxDegreeOfParallelism).ForAll(ls => { MyTask(ls); });
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
 
-            return Task.CompletedTask;
+            await Task.Run(() =>
+            {
+                listSelectedFiles.AsParallel().WithDegreeOfParallelism(options.MaxDegreeOfParallelism).ForAll(ls => { MyTask(ls); });
+            });
+
+
+            stopwatch.Stop();
+            TimeSpan stopwatchElapsed = stopwatch.Elapsed;
+            var milsec = Convert.ToInt32(stopwatchElapsed.TotalMilliseconds);
+            var sec = milsec / 1000;
+            var ts = TimeSpan.FromSeconds(sec);
+
+            elapsedTimeGetStatus = $"{ts.Hours}ч:{ts.Minutes}м:{ts.Seconds}с";
+            logger.Info($"Затраченное время: {ts.Hours}ч:{ts.Minutes}м:{ts.Seconds}с");
+
         }
 
         internal void MyTask(object arg)
@@ -115,6 +156,25 @@ namespace SRTtranslator
             Thread.Sleep(rNum);*/
             #endregion
 
+            lock (locker)
+            {
+                Invoke(new Action(() =>
+                {
+                    ConsoleTB.AppendText($"файл: {myClass.FileName}" + Environment.NewLine);
+                }));
+
+                foreach (var item in myClass.Dict)
+                {
+                    Invoke(new Action(() =>
+                    {
+                        ConsoleTB.AppendText($"{item.Key}" + Environment.NewLine);
+                        ConsoleTB.AppendText($"{item.Value}" + Environment.NewLine);
+                        ConsoleTB.AppendText(Environment.NewLine);
+                    }));
+
+                }
+            }
+            
             logger.Info($"MyTask: CurrentId " + Task.CurrentId + " завершен." + Environment.NewLine);
         }
 
@@ -142,23 +202,13 @@ namespace SRTtranslator
             }
 
         }
-
-
-        internal Dictionary<string, string> TaskTanslateString2(Dictionary<string, string> dict)
-        {
-            //Dictionary<string, string> dict2 = new Dictionary<string, string>();
-            return dict;
-        }
-        
-       
+                
         internal async Task<Dictionary<string, string>> TaskTanslateString3(Dictionary<string, string> dict)
         {
             Dictionary<string, string> dict2 = new Dictionary<string, string>();
-            /*Invoke(new Action(() =>
-            {
-                ConsoleTB.AppendText($"Task Id метода TaskTanslateString3 : {Task.CurrentId}" + Environment.NewLine);
-                ConsoleTB.AppendText($"Thread Id метода DTaskTanslateString3 : {Thread.CurrentThread.ManagedThreadId}" + Environment.NewLine);
-            }));*/
+            MethodBase m = MethodBase.GetCurrentMethod();
+
+            logger.Info($"Характеристики работы Метода {m.ReflectedType.Name} : Task {Task.CurrentId} - Thread {Thread.CurrentThread.ManagedThreadId}" + Environment.NewLine);
 
             foreach (var d in dict.Keys)
             {

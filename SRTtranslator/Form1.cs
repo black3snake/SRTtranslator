@@ -19,6 +19,8 @@ namespace SRTtranslator
     {
         List<string> listSelectFiles = new List<string>();
         static Logger logger = LogManager.GetCurrentClassLogger();
+        static string elapsedTimeGetStatus;
+
 
         public Form1()
         {
@@ -38,9 +40,11 @@ namespace SRTtranslator
                 }
             };
 
-            TranslateToolStripMenuItem.Click += (s, a) =>
+            TranslateToolStripMenuItem.Click +=  async(s, a) =>
             {
-                if(listView1.SelectedItems.Count > 1)
+                elapsedTimeGetStatus = string.Empty;
+
+                if (listView1.SelectedItems.Count > 1)
                 {
                     if (ConsoleTB.TextLength > 0)
                         ConsoleTB.Clear();
@@ -52,9 +56,11 @@ namespace SRTtranslator
                     {
                         listSelectFiles.Add(labDir.Text + "\\" + lVitem.Text);
                     }
-                    TranslatorHub(listSelectFiles);
+                    //TranslatorHub(listSelectFiles);
+                    await Zapusk(listSelectFiles);
                     listSelectFiles.Clear();
                     
+
 
                 } else if (listView1.SelectedItems.Count == 0)
                 {
@@ -69,10 +75,17 @@ namespace SRTtranslator
                         while (bc.TryTake(out MyClass localItem)) { }
 
                     listSelectFiles.Add(labDir.Text + "\\"+ listView1.SelectedItems[0].Text);
-                    TranslatorHub(listSelectFiles);
+                    //TranslatorHub(listSelectFiles);
+                    await Zapusk(listSelectFiles);
                     listSelectFiles.Clear();
                 }
 
+                if (ConsoleTB.TextLength > 500)
+                {
+                    ConsoleTB.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+                    ConsoleTB.AppendText(ConsoleTB.TextLength + Environment.NewLine);
+                    ConsoleTB.AppendText($"Затраченное время на перевод выбранных файлов: {elapsedTimeGetStatus}" + Environment.NewLine);
+                }
 
             };
 
