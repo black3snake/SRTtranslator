@@ -1,2 +1,2 @@
 Перевод файлов с расширением SRT с английского на русский.
-Используется: Win Forms, PLINQ, async, Nlog.
+Используется: Win Forms, PLINQ, async, Nlog..
