@@ -56,8 +56,7 @@ namespace SRTtranslator
                     {
                         listSelectFiles.Add(labDir.Text + "\\" + lVitem.Text);
                     }
-                    //TranslatorHub(listSelectFiles);
-                    await Zapusk(listSelectFiles);
+                    await ZapuskAsync(listSelectFiles);
                     listSelectFiles.Clear();
                     
 
@@ -75,8 +74,7 @@ namespace SRTtranslator
                         while (bc.TryTake(out MyClass localItem)) { }
 
                     listSelectFiles.Add(labDir.Text + "\\"+ listView1.SelectedItems[0].Text);
-                    //TranslatorHub(listSelectFiles);
-                    await Zapusk(listSelectFiles);
+                    await ZapuskAsync(listSelectFiles);
                     listSelectFiles.Clear();
                 }
 

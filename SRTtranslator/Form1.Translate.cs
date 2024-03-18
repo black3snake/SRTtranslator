@@ -35,37 +35,6 @@ namespace SRTtranslator
             //Dictionary<string, string> dict = new Dictionary<string, string>();
             //Dictionary<string, string> dictO2 = new Dictionary<string, string>();
 
-            //options.MaxDegreeOfParallelism = Environment.ProcessorCount > 2 ? Environment.ProcessorCount - 1 : 1;
-
-
-            /*Task.Run(() =>
-            {
-                listSelectedFiles.AsParallel().WithDegreeOfParallelism(options.MaxDegreeOfParallelism).ForAll(ls => { MyTask(ls); });
-                *//*Invoke(new Action(() =>
-                {
-                    OutputC(bc);
-                }));*//*
-
-                //Zapusk(listSelectedFiles);
-
-            });*/
-
-            //Task task = Task.Run(() => Zapusk(listSelectedFiles));
-
-            /*while (!task.IsCompleted)
-            {
-                Thread.Sleep(2000);
-                ConsoleTB.AppendText("Ожидание.." + Environment.NewLine);
-            }*/
-
-
-            //ConsoleTB.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-
-            //Zapusk(listSelectedFiles);
-
-            //OutputC(bc);
-
-
 
             /*foreach (string fileName in listSelectedFiles)
             {
@@ -111,7 +80,7 @@ namespace SRTtranslator
             }*/
         }
 
-        internal async Task Zapusk(List<string> listSelectedFiles)
+        internal async Task ZapuskAsync(List<string> listSelectedFiles)
         {
             options.MaxDegreeOfParallelism = Environment.ProcessorCount > 2 ? Environment.ProcessorCount - 1 : 1;
 
@@ -147,14 +116,6 @@ namespace SRTtranslator
             MyClass myClass = new MyClass(ft, resultT.Result);
             bc.TryAdd(myClass);
 
-            #region Random
-            /*var random = new Random();
-            var lowerBound = 3000;
-            var upperBound = 7000;
-            var rNum = random.Next(lowerBound, upperBound);
-
-            Thread.Sleep(rNum);*/
-            #endregion
 
             lock (locker)
             {
@@ -232,10 +193,6 @@ namespace SRTtranslator
                     }
                 }
 
-                /*if (ConsoleTB.TextLength > 500)
-                {
-                    ConsoleTB.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-                }*/
             }
 
 
