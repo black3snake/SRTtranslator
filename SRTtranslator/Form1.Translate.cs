@@ -18,9 +18,10 @@ namespace SRTtranslator
 {
     public partial class Form1
     {
-        static readonly string srtWord = @"^[^\d{1,}]\w.*$";
+        static readonly string srtWord = @"^[^\d{1,}]\w*.*$";
         object locker = new object();
         ParallelOptions options = new ParallelOptions();
+        //MyClass myClass;
 
         static BlockingCollection<MyClass> bc = new BlockingCollection<MyClass>();
 
@@ -135,7 +136,11 @@ namespace SRTtranslator
 
                 }
             }
-            
+
+            ISaveDataProcessor saveDataProcessor = new SaveDataProcessor();
+            saveDataProcessor.SaveProcessData(new FileSaveDataProvider(), myClass);
+
+
             logger.Info($"MyTask: CurrentId " + Task.CurrentId + " завершен." + Environment.NewLine);
         }
 
@@ -202,7 +207,7 @@ namespace SRTtranslator
 
     }
 
-    internal class MyClass
+    public class MyClass
     {
         public string FileName;
         public Dictionary<string, string> Dict;

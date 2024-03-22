@@ -54,7 +54,7 @@ namespace SRTtranslator
                         
                     foreach (ListViewItem lVitem in listView1.SelectedItems)
                     {
-                        listSelectFiles.Add(labDir.Text + "\\" + lVitem.Text);
+                        listSelectFiles.Add(lVitem.Text);
                     }
                     await ZapuskAsync(listSelectFiles);
                     listSelectFiles.Clear();
@@ -73,7 +73,7 @@ namespace SRTtranslator
                     if (bc.Count > 0)
                         while (bc.TryTake(out MyClass localItem)) { }
 
-                    listSelectFiles.Add(labDir.Text + "\\"+ listView1.SelectedItems[0].Text);
+                    listSelectFiles.Add(listView1.SelectedItems[0].Text);
                     await ZapuskAsync(listSelectFiles);
                     listSelectFiles.Clear();
                 }

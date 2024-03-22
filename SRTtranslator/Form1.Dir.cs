@@ -22,7 +22,8 @@ namespace SRTtranslator
                 {
                     ListViewItem lvi = new ListViewItem();
                     // установка названия файла
-                    lvi.Text = file.Remove(0, file.LastIndexOf('\\') + 1);
+                    //lvi.Text = file.Remove(0, file.LastIndexOf('\\') + 1);
+                    lvi.Text = file;
                     lvi.ImageIndex = 0; // установка картинки для файла
                                         // добавляем элемент в ListView
                     listView1.Items.Add(lvi);
