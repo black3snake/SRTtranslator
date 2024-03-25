@@ -18,9 +18,8 @@ namespace SRTtranslator
     public partial class Form1 : Form
     {
         List<string> listSelectFiles = new List<string>();
-        static Logger logger = LogManager.GetCurrentClassLogger();
+        static public Logger logger = LogManager.GetCurrentClassLogger();
         static string elapsedTimeGetStatus;
-
 
         public Form1()
         {

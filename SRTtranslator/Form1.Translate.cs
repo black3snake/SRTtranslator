@@ -6,13 +6,10 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-//using System.Windows.Threading;
 
 namespace SRTtranslator
 {
@@ -168,7 +165,7 @@ namespace SRTtranslator
             }
 
         }
-                
+
         internal async Task<Dictionary<string, string>> TaskTanslateString3(Dictionary<string, string> dict)
         {
             Dictionary<string, string> dict2 = new Dictionary<string, string>();

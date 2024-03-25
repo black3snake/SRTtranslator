@@ -4,6 +4,8 @@ namespace SRTtranslator
 {
     internal interface ISaveDataProvider
     {
+        string maskBak { get; }
+        bool BakFileExist { get; set; }
         string SaveData(MyClass myClass);
     }
 
