@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SRTtranslator
@@ -32,9 +29,10 @@ namespace SRTtranslator
                 bakfileexist = CreateFileBak(myClass.FileName, strBakFile);
                 if (bakfileexist)
                     Form1.logger.Info($"Файлу {myClass.FileName}, создана копия {strBakFile}");
-            } else
+            }
+            else
             {
-                    Form1.logger.Info($"Файлу {myClass.FileName}, уже существует копия {strBakFile}");
+                Form1.logger.Info($"Файлу {myClass.FileName}, уже существует копия {strBakFile}");
             }
 
             using (StreamReader readerS = new StreamReader(myClass.FileName, Encoding.UTF8))
@@ -47,18 +45,39 @@ namespace SRTtranslator
             {
                 strF = Regex.Replace(strF, item.Key, item.Value, RegexOptions.Multiline);
             }
+            FileInfo fileInfoSRC = new FileInfo(myClass.FileName);
+            FileInfo fileInfoBAK = new FileInfo(strBakFile);
 
-            return "ok";
+            if (fileInfoSRC.Length == fileInfoBAK.Length)
+            {
+                using (StreamWriter writerS = new StreamWriter(myClass.FileName, false, Encoding.UTF8))
+                {
+                    try
+                    {
+                        writerS.Write(strF);
+                        Form1.logger.Info($"Файл {myClass.FileName}, перезаписан с новыми данными перевода.");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message, "Error Message", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                return "Переведен и записан";
+            }
+            else
+            {
+                Form1.logger.Info($"Файлы {myClass.FileName} и {strBakFile} имеют разную длинну, возможно они уже переведены.");
+            }
+
+            return "Был переведен ранее или что-то пошло не так :-)";
         }
 
         internal bool TestBakFile(string filename)
         {
-            //string[] filesBakInDir = Directory.GetFiles(filename.Remove(filename.LastIndexOf('\\')+1), maskBak, SearchOption.TopDirectoryOnly);
-            //if (filesBakInDir.Contains(filename)) 
-            if (!File.Exists(filename)) 
+            if (!File.Exists(filename))
                 BakFileExist = false;
-             else
-                BakFileExist=true;
+            else
+                BakFileExist = true;
 
             return BakFileExist;
         }
@@ -68,7 +87,8 @@ namespace SRTtranslator
             try
             {
                 File.Copy(filename, filenamebak);
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Error Message", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }

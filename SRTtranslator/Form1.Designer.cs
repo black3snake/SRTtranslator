@@ -48,6 +48,7 @@
             this.labCountFiles = new System.Windows.Forms.Label();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.ConsoleTB = new System.Windows.Forms.TextBox();
+            this.checkBoxOutConsole = new System.Windows.Forms.CheckBox();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -193,11 +194,22 @@
             this.ConsoleTB.Size = new System.Drawing.Size(773, 166);
             this.ConsoleTB.TabIndex = 7;
             // 
+            // checkBoxOutConsole
+            // 
+            this.checkBoxOutConsole.AutoSize = true;
+            this.checkBoxOutConsole.Location = new System.Drawing.Point(15, 249);
+            this.checkBoxOutConsole.Name = "checkBoxOutConsole";
+            this.checkBoxOutConsole.Size = new System.Drawing.Size(166, 17);
+            this.checkBoxOutConsole.TabIndex = 8;
+            this.checkBoxOutConsole.Text = "Нужен ли вывод перевода?";
+            this.checkBoxOutConsole.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.checkBoxOutConsole);
             this.Controls.Add(this.ConsoleTB);
             this.Controls.Add(this.labCountFiles);
             this.Controls.Add(this.labNameCounts);
@@ -236,6 +248,7 @@
         private System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.ToolStripMenuItem TranslateToolStripMenuItem;
         private System.Windows.Forms.TextBox ConsoleTB;
+        private System.Windows.Forms.CheckBox checkBoxOutConsole;
     }
 }
 

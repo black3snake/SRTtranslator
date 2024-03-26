@@ -11,8 +11,7 @@ namespace SRTtranslator
 
     internal interface ISaveDataProcessor
     {
-        //MyClass MyClass { get; }
-        void SaveProcessData(ISaveDataProvider saveDataProvider, MyClass myClass);
+        string SaveProcessData(ISaveDataProvider saveDataProvider, MyClass myClass);
     }
 
 

@@ -18,9 +18,8 @@ namespace SRTtranslator
         static readonly string srtWord = @"^[^\d{1,}]\w*.*$";
         object locker = new object();
         ParallelOptions options = new ParallelOptions();
-        //MyClass myClass;
 
-        static BlockingCollection<MyClass> bc = new BlockingCollection<MyClass>();
+        //static BlockingCollection<MyClass> bc = new BlockingCollection<MyClass>();
 
 
         private static HttpClient Client = new HttpClient()
@@ -110,38 +109,61 @@ namespace SRTtranslator
 
             var dict = DictSringFromFile(ft);
             var resultT = TaskTanslateString3(dict);
-
+            
+            //bc.TryAdd(myClass);
             MyClass myClass = new MyClass(ft, resultT.Result);
-            bc.TryAdd(myClass);
 
-
-            lock (locker)
+            if(myClass.Dict.ContainsValue("Error404"))
             {
-                Invoke(new Action(() =>
-                {
-                    ConsoleTB.AppendText($"файл: {myClass.FileName}" + Environment.NewLine);
-                }));
-
-                foreach (var item in myClass.Dict)
+                lock (locker)
                 {
                     Invoke(new Action(() =>
                     {
-                        ConsoleTB.AppendText($"{item.Key}" + Environment.NewLine);
-                        ConsoleTB.AppendText($"{item.Value}" + Environment.NewLine);
-                        ConsoleTB.AppendText(Environment.NewLine);
+                        ConsoleTB.AppendText($"Ошибка в получении перевода для файла: {myClass.FileName}" + Environment.NewLine);
+                        ConsoleTB.AppendText($"Программе для перевода необходим доступ в сеть Интернет" + Environment.NewLine);
+                    }));
+                }
+                return;
+            }
+
+
+            if(checkBoxOutConsole.Checked)
+            {
+                lock (locker)
+                {
+                    Invoke(new Action(() =>
+                    {
+                        ConsoleTB.AppendText($"файл: {myClass.FileName}" + Environment.NewLine);
                     }));
 
+                    foreach (var item in myClass.Dict)
+                    {
+                        Invoke(new Action(() =>
+                        {
+                            //ConsoleTB.AppendText($"{item.Key}" + Environment.NewLine);
+                            ConsoleTB.AppendText($"{item.Value}" + Environment.NewLine);
+                            ConsoleTB.AppendText(Environment.NewLine);
+                        }));
+
+                    }
                 }
             }
 
             ISaveDataProcessor saveDataProcessor = new SaveDataProcessor();
-            saveDataProcessor.SaveProcessData(new FileSaveDataProvider(), myClass);
-
+            string result = saveDataProcessor.SaveProcessData(new FileSaveDataProvider(), myClass);
+            lock (locker)
+            {
+                Invoke(new Action(() =>
+                {
+                    ConsoleTB.AppendText($"{myClass.FileName} - {result}" + Environment.NewLine);
+                }));
+            }
 
             logger.Info($"MyTask: CurrentId " + Task.CurrentId + " завершен." + Environment.NewLine);
+            logger.Info($"{myClass.FileName} - {result}" + Environment.NewLine);
         }
 
-        internal void OutputC(BlockingCollection<MyClass> bc)
+        /*internal void OutputC(BlockingCollection<MyClass> bc)
         {
             foreach (var item in bc)
             {
@@ -164,7 +186,7 @@ namespace SRTtranslator
                 ConsoleTB.AppendText(ConsoleTB.TextLength + Environment.NewLine);
             }
 
-        }
+        }*/
 
         internal async Task<Dictionary<string, string>> TaskTanslateString3(Dictionary<string, string> dict)
         {
@@ -183,6 +205,7 @@ namespace SRTtranslator
         internal Dictionary<string, string> DictSringFromFile(string fileName)
         {
             Dictionary<string, string> dict = new Dictionary<string, string>();
+            Random rnd = new Random();
 
             using (StreamReader reader = new StreamReader(fileName, Encoding.UTF8))
             {
@@ -191,7 +214,14 @@ namespace SRTtranslator
                 {
                     if (Regex.IsMatch(line, srtWord, RegexOptions.IgnoreCase))
                     {
-                        dict.Add(line, null);
+                        try
+                        {
+                            dict.Add(line, null);
+                        } catch
+                        {
+                            dict.Add(line + $" 0A0-{rnd.Next(500)}", null);
+                        }
+
                     }
                 }
 
