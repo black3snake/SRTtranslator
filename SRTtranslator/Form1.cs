@@ -1,46 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using NLog;
-using NLog.Targets;
+﻿using NLog;
 using NLog.Config;
-using System.Web.UI.WebControls;
+using NLog.Targets;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Windows.Forms;
 
 namespace SRTtranslator
 {
     public partial class Form1 : Form
     {
         List<string> listSelectFiles = new List<string>();
-        static Logger logger = LogManager.GetCurrentClassLogger();
+        static public Logger logger = LogManager.GetCurrentClassLogger();
         static string elapsedTimeGetStatus;
-
 
         public Form1()
         {
             InitializeComponent();
-            
-            listView1.MouseUp += (s, a) => {
+
+            listView1.MouseUp += (s, a) =>
+            {
                 if (a.Button == MouseButtons.Right)
                 {
                     contextMenuStrip1.Show(MousePosition, ToolStripDropDownDirection.Right);
                 }
             };
 
-            REFRESHToolStripMenuItem.Click += (s, a) => {
-                if(!string.IsNullOrEmpty(labDir.Text))
+            REFRESHToolStripMenuItem.Click += (s, a) =>
+            {
+                if (!string.IsNullOrEmpty(labDir.Text))
                 {
                     DirRefresh(labDir.Text, toolStripTextBox1.Text);
                 }
             };
 
-            TranslateToolStripMenuItem.Click +=  async(s, a) =>
+            TranslateToolStripMenuItem.Click += async (s, a) =>
             {
                 elapsedTimeGetStatus = string.Empty;
 
@@ -49,41 +43,41 @@ namespace SRTtranslator
                     if (ConsoleTB.TextLength > 0)
                         ConsoleTB.Clear();
 
-                    if (bc.Count > 0)
-                        while (bc.TryTake(out MyClass localItem)) {}
-                        
+                    /*if (bc.Count > 0)
+                        while (bc.TryTake(out MyClass localItem)) { }*/
+
                     foreach (ListViewItem lVitem in listView1.SelectedItems)
                     {
-                        listSelectFiles.Add(labDir.Text + "\\" + lVitem.Text);
+                        listSelectFiles.Add(lVitem.Text);
                     }
-                    //TranslatorHub(listSelectFiles);
-                    await Zapusk(listSelectFiles);
+                    await ZapuskAsync(listSelectFiles);
                     listSelectFiles.Clear();
-                    
 
 
-                } else if (listView1.SelectedItems.Count == 0)
+
+                }
+                else if (listView1.SelectedItems.Count == 0)
                 {
                     MessageBox.Show("Ничего не выбрано", "Сообщение", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
-                } else
+                }
+                else
                 {
                     if (ConsoleTB.TextLength > 0)
                         ConsoleTB.Clear();
-                    
-                    if (bc.Count > 0)
-                        while (bc.TryTake(out MyClass localItem)) { }
 
-                    listSelectFiles.Add(labDir.Text + "\\"+ listView1.SelectedItems[0].Text);
-                    //TranslatorHub(listSelectFiles);
-                    await Zapusk(listSelectFiles);
+                    /*if (bc.Count > 0)
+                        while (bc.TryTake(out MyClass localItem)) { }*/
+
+                    listSelectFiles.Add(listView1.SelectedItems[0].Text);
+                    await ZapuskAsync(listSelectFiles);
                     listSelectFiles.Clear();
                 }
 
-                if (ConsoleTB.TextLength > 500)
+                if (ConsoleTB.TextLength > 0)
                 {
                     ConsoleTB.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-                    ConsoleTB.AppendText(ConsoleTB.TextLength + Environment.NewLine);
+                    //ConsoleTB.AppendText(ConsoleTB.TextLength + Environment.NewLine);
                     ConsoleTB.AppendText($"Затраченное время на перевод выбранных файлов: {elapsedTimeGetStatus}" + Environment.NewLine);
                 }
 
@@ -151,7 +145,7 @@ ${exception: format=ToString}";
                 labDir.Text = folderBrowser.SelectedPath;
 
                 DirRefresh(folderBrowser.SelectedPath, toolStripTextBox1.Text);
-            
+
             }
 
         }

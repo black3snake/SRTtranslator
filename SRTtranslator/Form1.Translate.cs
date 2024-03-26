@@ -6,23 +6,20 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-//using System.Windows.Threading;
 
 namespace SRTtranslator
 {
     public partial class Form1
     {
-        static readonly string srtWord = @"^[^\d{1,}]\w.*$";
+        static readonly string srtWord = @"^[^\d{1,}]\w*.*$";
         object locker = new object();
         ParallelOptions options = new ParallelOptions();
 
-        static BlockingCollection<MyClass> bc = new BlockingCollection<MyClass>();
+        //static BlockingCollection<MyClass> bc = new BlockingCollection<MyClass>();
 
 
         private static HttpClient Client = new HttpClient()
@@ -34,37 +31,6 @@ namespace SRTtranslator
         {
             //Dictionary<string, string> dict = new Dictionary<string, string>();
             //Dictionary<string, string> dictO2 = new Dictionary<string, string>();
-
-            //options.MaxDegreeOfParallelism = Environment.ProcessorCount > 2 ? Environment.ProcessorCount - 1 : 1;
-
-
-            /*Task.Run(() =>
-            {
-                listSelectedFiles.AsParallel().WithDegreeOfParallelism(options.MaxDegreeOfParallelism).ForAll(ls => { MyTask(ls); });
-                *//*Invoke(new Action(() =>
-                {
-                    OutputC(bc);
-                }));*//*
-
-                //Zapusk(listSelectedFiles);
-
-            });*/
-
-            //Task task = Task.Run(() => Zapusk(listSelectedFiles));
-
-            /*while (!task.IsCompleted)
-            {
-                Thread.Sleep(2000);
-                ConsoleTB.AppendText("Ожидание.." + Environment.NewLine);
-            }*/
-
-
-            //ConsoleTB.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-
-            //Zapusk(listSelectedFiles);
-
-            //OutputC(bc);
-
 
 
             /*foreach (string fileName in listSelectedFiles)
@@ -111,7 +77,7 @@ namespace SRTtranslator
             }*/
         }
 
-        internal async Task Zapusk(List<string> listSelectedFiles)
+        internal async Task ZapuskAsync(List<string> listSelectedFiles)
         {
             options.MaxDegreeOfParallelism = Environment.ProcessorCount > 2 ? Environment.ProcessorCount - 1 : 1;
 
@@ -143,42 +109,61 @@ namespace SRTtranslator
 
             var dict = DictSringFromFile(ft);
             var resultT = TaskTanslateString3(dict);
-
+            
+            //bc.TryAdd(myClass);
             MyClass myClass = new MyClass(ft, resultT.Result);
-            bc.TryAdd(myClass);
 
-            #region Random
-            /*var random = new Random();
-            var lowerBound = 3000;
-            var upperBound = 7000;
-            var rNum = random.Next(lowerBound, upperBound);
+            if(myClass.Dict.ContainsValue("Error404"))
+            {
+                lock (locker)
+                {
+                    Invoke(new Action(() =>
+                    {
+                        ConsoleTB.AppendText($"Ошибка в получении перевода для файла: {myClass.FileName}" + Environment.NewLine);
+                        ConsoleTB.AppendText($"Программе для перевода необходим доступ в сеть Интернет" + Environment.NewLine);
+                    }));
+                }
+                return;
+            }
 
-            Thread.Sleep(rNum);*/
-            #endregion
 
+            if(checkBoxOutConsole.Checked)
+            {
+                lock (locker)
+                {
+                    Invoke(new Action(() =>
+                    {
+                        ConsoleTB.AppendText($"файл: {myClass.FileName}" + Environment.NewLine);
+                    }));
+
+                    foreach (var item in myClass.Dict)
+                    {
+                        Invoke(new Action(() =>
+                        {
+                            //ConsoleTB.AppendText($"{item.Key}" + Environment.NewLine);
+                            ConsoleTB.AppendText($"{item.Value}" + Environment.NewLine);
+                            ConsoleTB.AppendText(Environment.NewLine);
+                        }));
+
+                    }
+                }
+            }
+
+            ISaveDataProcessor saveDataProcessor = new SaveDataProcessor();
+            string result = saveDataProcessor.SaveProcessData(new FileSaveDataProvider(), myClass);
             lock (locker)
             {
                 Invoke(new Action(() =>
                 {
-                    ConsoleTB.AppendText($"файл: {myClass.FileName}" + Environment.NewLine);
+                    ConsoleTB.AppendText($"{myClass.FileName} - {result}" + Environment.NewLine);
                 }));
-
-                foreach (var item in myClass.Dict)
-                {
-                    Invoke(new Action(() =>
-                    {
-                        ConsoleTB.AppendText($"{item.Key}" + Environment.NewLine);
-                        ConsoleTB.AppendText($"{item.Value}" + Environment.NewLine);
-                        ConsoleTB.AppendText(Environment.NewLine);
-                    }));
-
-                }
             }
-            
+
             logger.Info($"MyTask: CurrentId " + Task.CurrentId + " завершен." + Environment.NewLine);
+            logger.Info($"{myClass.FileName} - {result}" + Environment.NewLine);
         }
 
-        internal void OutputC(BlockingCollection<MyClass> bc)
+        /*internal void OutputC(BlockingCollection<MyClass> bc)
         {
             foreach (var item in bc)
             {
@@ -201,8 +186,8 @@ namespace SRTtranslator
                 ConsoleTB.AppendText(ConsoleTB.TextLength + Environment.NewLine);
             }
 
-        }
-                
+        }*/
+
         internal async Task<Dictionary<string, string>> TaskTanslateString3(Dictionary<string, string> dict)
         {
             Dictionary<string, string> dict2 = new Dictionary<string, string>();
@@ -220,6 +205,7 @@ namespace SRTtranslator
         internal Dictionary<string, string> DictSringFromFile(string fileName)
         {
             Dictionary<string, string> dict = new Dictionary<string, string>();
+            Random rnd = new Random();
 
             using (StreamReader reader = new StreamReader(fileName, Encoding.UTF8))
             {
@@ -228,14 +214,17 @@ namespace SRTtranslator
                 {
                     if (Regex.IsMatch(line, srtWord, RegexOptions.IgnoreCase))
                     {
-                        dict.Add(line, null);
+                        try
+                        {
+                            dict.Add(line, null);
+                        } catch
+                        {
+                            dict.Add(line + $" 0A0-{rnd.Next(500)}", null);
+                        }
+
                     }
                 }
 
-                /*if (ConsoleTB.TextLength > 500)
-                {
-                    ConsoleTB.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-                }*/
             }
 
 
@@ -245,7 +234,7 @@ namespace SRTtranslator
 
     }
 
-    internal class MyClass
+    public class MyClass
     {
         public string FileName;
         public Dictionary<string, string> Dict;
