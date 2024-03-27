@@ -52,7 +52,7 @@ namespace SRTtranslator
                     }
                     await ZapuskAsync(listSelectFiles);
                     listSelectFiles.Clear();
-
+                    //
 
 
                 }
