@@ -50,9 +50,10 @@ namespace SRTtranslator
                     {
                         listSelectFiles.Add(lVitem.Text);
                     }
+                    listView1.Enabled = false;
                     await ZapuskAsync(listSelectFiles);
+                    listView1.Enabled = true;
                     listSelectFiles.Clear();
-
 
 
                 }
@@ -70,7 +71,9 @@ namespace SRTtranslator
                         while (bc.TryTake(out MyClass localItem)) { }*/
 
                     listSelectFiles.Add(listView1.SelectedItems[0].Text);
+                    listView1.Enabled = false;
                     await ZapuskAsync(listSelectFiles);
+                    listView1.Enabled = true;
                     listSelectFiles.Clear();
                 }
 

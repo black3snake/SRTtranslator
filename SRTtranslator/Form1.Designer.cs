@@ -191,15 +191,16 @@
             this.ConsoleTB.Location = new System.Drawing.Point(15, 272);
             this.ConsoleTB.Multiline = true;
             this.ConsoleTB.Name = "ConsoleTB";
-            this.ConsoleTB.Size = new System.Drawing.Size(773, 166);
+            this.ConsoleTB.Size = new System.Drawing.Size(773, 198);
             this.ConsoleTB.TabIndex = 7;
             // 
             // checkBoxOutConsole
             // 
             this.checkBoxOutConsole.AutoSize = true;
-            this.checkBoxOutConsole.Location = new System.Drawing.Point(15, 249);
+            this.checkBoxOutConsole.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.checkBoxOutConsole.Location = new System.Drawing.Point(15, 245);
             this.checkBoxOutConsole.Name = "checkBoxOutConsole";
-            this.checkBoxOutConsole.Size = new System.Drawing.Size(166, 17);
+            this.checkBoxOutConsole.Size = new System.Drawing.Size(206, 20);
             this.checkBoxOutConsole.TabIndex = 8;
             this.checkBoxOutConsole.Text = "Нужен ли вывод перевода?";
             this.checkBoxOutConsole.UseVisualStyleBackColor = true;
@@ -208,7 +209,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(800, 482);
             this.Controls.Add(this.checkBoxOutConsole);
             this.Controls.Add(this.ConsoleTB);
             this.Controls.Add(this.labCountFiles);
@@ -217,6 +218,7 @@
             this.Controls.Add(this.labDir);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.menuStrip1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
