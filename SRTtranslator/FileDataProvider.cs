@@ -86,7 +86,14 @@ namespace SRTtranslator
         {
             try
             {
-                File.Copy(filename, filenamebak);
+                if (filename.Length > 255 | filenamebak.Length > 255)
+                {
+                    File.Copy("\\\\?\\" + filename, "\\\\?\\" + filenamebak);
+                }else
+                {
+                    File.Copy(filename, filenamebak);
+                }
+
             }
             catch (Exception ex)
             {
